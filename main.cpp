@@ -72,7 +72,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
     	case WM_DESTROY:
             //DeleteObject(hFont);
             //DeleteObject(hFontSmall);
-            //mciSendString("close bgm", NULL, 0, NULL);
+            mciSendString("close bgm", NULL, 0, NULL);
             //mciSendString("close sndJump", NULL, 0, NULL);
             //mciSendString("close sndShoot", NULL, 0, NULL);
             //mciSendString("close sndEnemyJump", NULL, 0, NULL);
@@ -145,7 +145,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow){
 
     int w, h, c;
     stbi_set_flip_vertically_on_load(true);
-    unsigned char *data = stbi_load("textures/good_woden.png", &w, &h, &c, 0);
+    unsigned char *data = stbi_load("textures/prison.png", &w, &h, &c, 0);
 
 
 
@@ -172,8 +172,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow){
     //mciSendString("open \"sfx/ejump.wav\" type waveaudio alias  sndEnemyJump", NULL, 0, NULL);
     
 
-    //mciSendString("open music/main_menu.wav type mpegvideo alias bgm", NULL, 0, NULL);
-    //mciSendString("play bgm repeat", NULL, 0, NULL);
+    mciSendString("open music/middle-ages.wav type mpegvideo alias bgm", NULL, 0, NULL);
+    mciSendString("play bgm repeat", NULL, 0, NULL);
 
 
 
