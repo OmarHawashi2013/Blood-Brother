@@ -145,7 +145,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow){
 
     int w, h, c;
     stbi_set_flip_vertically_on_load(true);
-    unsigned char *data = stbi_load("textures/break.png", &w, &h, &c, 0);
+    unsigned char *data = stbi_load("textures/good_woden.png", &w, &h, &c, 0);
 
 
 
