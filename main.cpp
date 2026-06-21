@@ -22,10 +22,21 @@
 #include <GL/glu.h>
 
 
-
+float rotation = 0;
 
 #define screenX 1280
 #define screenY 720
+
+float vertices[] = {
+    -0.5f, -0.5f,  0.5f,
+     0.5f, -0.5f,  0.5f,
+     0.5f,  0.5f,  0.5f,
+    -0.5f,  0.5f,  0.5f,
+    -0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f, -0.5f,
+     0.5f,  0.5f, -0.5f,
+    -0.5f,  0.5f, -0.5f
+};
 
 
 constexpr double MS_PER_FRAME = 1000.0 / 60.0;
@@ -52,7 +63,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
 
-            gluPerspective(45.0, double(screenX / screenY), 0.1, 100.0);
+            gluPerspective(45.0, double(screenX) / double(screenY), 0.1, 100.0);
 
             glMatrixMode(GL_MODELVIEW);
             glLoadIdentity();
@@ -128,13 +139,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow){
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(45.0, double(screenX / screenY), 0.1, 100.0);
+    gluPerspective(45.0, double(screenX) / double(screenY), 0.1, 100.0);
 
     glMatrixMode(GL_MODELVIEW);
 
     int w, h, c;
     stbi_set_flip_vertically_on_load(true);
-    unsigned char *data = stbi_load("textures/photo.jpg", &w, &h, &c, 0);
+    unsigned char *data = stbi_load("textures/break.png", &w, &h, &c, 0);
 
 
 
@@ -191,16 +202,56 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow){
         glLoadIdentity();
         glTranslatef(0.0f, 0.0f, -3.0f);
 
-        glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, tex);
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+        gluLookAt(0, 0, 5,  0, 0, 0,  0, 1, 0);
 
-        glBegin(GL_TRIANGLES);
-            glTexCoord2f(0.0f, 0.0f); glVertex3f(-0.5f, -0.5f, 0.0f);
-            glTexCoord2f(1.0f, 0.0f); glVertex3f( 0.5f, -0.5f, 0.0f);
-            glTexCoord2f(0.5f, 1.0f); glVertex3f( 0.0f,  0.5f, 0.0f);
-        glEnd();
 
-        glDisable(GL_TEXTURE_2D);
+
+// --------------- CUBE -------------------
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, tex);
+
+    glRotatef(rotation, 1.0f, 1.0f, 0.0f);
+    rotation += 1.0f;
+
+    glBegin(GL_QUADS);
+        glTexCoord2f(0.0f, 0.0f); glVertex3f(-0.5f, -0.5f,  0.5f);
+        glTexCoord2f(1.0f, 0.0f); glVertex3f( 0.5f, -0.5f,  0.5f);
+        glTexCoord2f(1.0f, 1.0f); glVertex3f( 0.5f,  0.5f,  0.5f);
+        glTexCoord2f(0.0f, 1.0f); glVertex3f(-0.5f,  0.5f,  0.5f);
+
+        glTexCoord2f(1.0f, 0.0f); glVertex3f(-0.5f, -0.5f, -0.5f);
+        glTexCoord2f(1.0f, 1.0f); glVertex3f(-0.5f,  0.5f, -0.5f);
+        glTexCoord2f(0.0f, 1.0f); glVertex3f( 0.5f,  0.5f, -0.5f);
+        glTexCoord2f(0.0f, 0.0f); glVertex3f( 0.5f, -0.5f, -0.5f);
+
+        glTexCoord2f(0.0f, 1.0f); glVertex3f(-0.5f,  0.5f, -0.5f);
+        glTexCoord2f(0.0f, 0.0f); glVertex3f(-0.5f,  0.5f,  0.5f);
+        glTexCoord2f(1.0f, 0.0f); glVertex3f( 0.5f,  0.5f,  0.5f);
+        glTexCoord2f(1.0f, 1.0f); glVertex3f( 0.5f,  0.5f, -0.5f);
+
+        glTexCoord2f(1.0f, 1.0f); glVertex3f(-0.5f, -0.5f, -0.5f);
+        glTexCoord2f(0.0f, 1.0f); glVertex3f( 0.5f, -0.5f, -0.5f);
+        glTexCoord2f(0.0f, 0.0f); glVertex3f( 0.5f, -0.5f,  0.5f);
+        glTexCoord2f(1.0f, 0.0f); glVertex3f(-0.5f, -0.5f,  0.5f);
+
+        glTexCoord2f(1.0f, 0.0f); glVertex3f( 0.5f, -0.5f, -0.5f);
+        glTexCoord2f(1.0f, 1.0f); glVertex3f( 0.5f,  0.5f, -0.5f);
+        glTexCoord2f(0.0f, 1.0f); glVertex3f( 0.5f,  0.5f,  0.5f);
+        glTexCoord2f(0.0f, 0.0f); glVertex3f( 0.5f, -0.5f,  0.5f);
+
+        glTexCoord2f(0.0f, 0.0f); glVertex3f(-0.5f, -0.5f, -0.5f);
+        glTexCoord2f(1.0f, 0.0f); glVertex3f(-0.5f, -0.5f,  0.5f);
+        glTexCoord2f(1.0f, 1.0f); glVertex3f(-0.5f,  0.5f,  0.5f);
+        glTexCoord2f(0.0f, 1.0f); glVertex3f(-0.5f,  0.5f, -0.5f);
+    glEnd();
+
+    glDisable(GL_TEXTURE_2D);
+
+// --------------- CUBE -------------------
+
 
         SwapBuffers(hdc);
 
