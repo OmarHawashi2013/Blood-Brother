@@ -15,11 +15,19 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <windows.h>
+#include <iostream>
 #include <chrono>
+#include <vector>
+#include <string>
 #include <math.h>
+#include <fstream>
+#include <sstream>
 #include <GL/gl.h>
-#include "inc/stb_image.h"
 #include <GL/glu.h>
+#include "inc/input.h"
+#include "inc/stb_image.h"
+#include "inc/obj.h"
+using namespace std;
 
 
 float rotation = 0;
@@ -145,7 +153,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow){
 
     int w, h, c;
     stbi_set_flip_vertically_on_load(true);
-    unsigned char *data = stbi_load("textures/prison.png", &w, &h, &c, 0);
+    unsigned char *data = stbi_load("textures/house.png", &w, &h, &c, 0);
 
 
 
@@ -161,6 +169,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow){
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         glTexImage2D(GL_TEXTURE_2D, 0, format, w, h, 0, format, GL_UNSIGNED_BYTE, data);
         stbi_image_free(data);
+    }
+
+    ObjModel myModel;
+    if (!myModel.load("models/map.obj")) {
+        MessageBox(hwnd, "Failed to load OBJ file!", "Error", MB_ICONERROR);
+        return 1;
     }
 
     /*x
@@ -196,6 +210,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow){
 
         auto frameStart = std::chrono::high_resolution_clock::now();
 
+        if (GetForegroundWindow() == hwnd)
+            Input::update();
+
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
@@ -208,49 +225,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow){
 
 
 
-// --------------- CUBE -------------------
+// --------------- OBJ MODEL -------------------
+    glLoadIdentity();
+    gluLookAt(0.0f, 2.0f, 7.0f,  0.0f, 0.0f, 0.0f,  0.0f, 1.0f, 0.0f); 
 
-    glEnable(GL_TEXTURE_2D);
+    static float rot = 168.5f;
+    glRotatef(rot, 0.0f, 1.0f, 0.0f);
+    glRotatef(20, 1.0f, 0.0f, 0.0f);
+    //rot += 0.5f;
+
+    //if (Input::pressed(VK_RETURN)) {
+    //    cout << rot << flush << endl;
+    //}
+
     glBindTexture(GL_TEXTURE_2D, tex);
 
-    glRotatef(rotation, 1.0f, 1.0f, 0.0f);
-    rotation += 1.0f;
-
-    glBegin(GL_QUADS);
-        glTexCoord2f(0.0f, 0.0f); glVertex3f(-0.5f, -0.5f,  0.5f);
-        glTexCoord2f(1.0f, 0.0f); glVertex3f( 0.5f, -0.5f,  0.5f);
-        glTexCoord2f(1.0f, 1.0f); glVertex3f( 0.5f,  0.5f,  0.5f);
-        glTexCoord2f(0.0f, 1.0f); glVertex3f(-0.5f,  0.5f,  0.5f);
-
-        glTexCoord2f(1.0f, 0.0f); glVertex3f(-0.5f, -0.5f, -0.5f);
-        glTexCoord2f(1.0f, 1.0f); glVertex3f(-0.5f,  0.5f, -0.5f);
-        glTexCoord2f(0.0f, 1.0f); glVertex3f( 0.5f,  0.5f, -0.5f);
-        glTexCoord2f(0.0f, 0.0f); glVertex3f( 0.5f, -0.5f, -0.5f);
-
-        glTexCoord2f(0.0f, 1.0f); glVertex3f(-0.5f,  0.5f, -0.5f);
-        glTexCoord2f(0.0f, 0.0f); glVertex3f(-0.5f,  0.5f,  0.5f);
-        glTexCoord2f(1.0f, 0.0f); glVertex3f( 0.5f,  0.5f,  0.5f);
-        glTexCoord2f(1.0f, 1.0f); glVertex3f( 0.5f,  0.5f, -0.5f);
-
-        glTexCoord2f(1.0f, 1.0f); glVertex3f(-0.5f, -0.5f, -0.5f);
-        glTexCoord2f(0.0f, 1.0f); glVertex3f( 0.5f, -0.5f, -0.5f);
-        glTexCoord2f(0.0f, 0.0f); glVertex3f( 0.5f, -0.5f,  0.5f);
-        glTexCoord2f(1.0f, 0.0f); glVertex3f(-0.5f, -0.5f,  0.5f);
-
-        glTexCoord2f(1.0f, 0.0f); glVertex3f( 0.5f, -0.5f, -0.5f);
-        glTexCoord2f(1.0f, 1.0f); glVertex3f( 0.5f,  0.5f, -0.5f);
-        glTexCoord2f(0.0f, 1.0f); glVertex3f( 0.5f,  0.5f,  0.5f);
-        glTexCoord2f(0.0f, 0.0f); glVertex3f( 0.5f, -0.5f,  0.5f);
-
-        glTexCoord2f(0.0f, 0.0f); glVertex3f(-0.5f, -0.5f, -0.5f);
-        glTexCoord2f(1.0f, 0.0f); glVertex3f(-0.5f, -0.5f,  0.5f);
-        glTexCoord2f(1.0f, 1.0f); glVertex3f(-0.5f,  0.5f,  0.5f);
-        glTexCoord2f(0.0f, 1.0f); glVertex3f(-0.5f,  0.5f, -0.5f);
-    glEnd();
-
-    glDisable(GL_TEXTURE_2D);
-
-// --------------- CUBE -------------------
+    myModel.render();
+// --------------- OBJ MODEL -------------------
 
 
         SwapBuffers(hdc);
